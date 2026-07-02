@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    /* Runtime */
+    "target": "ES2020",
+    "module": "commonjs", // Changed from CommonJS to ESNext
+
+    /* Output */
+    "rootDir": "./",
+    "outDir": "./dist",
+    "noEmit": false,
+
+    /* Type safety */
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    /* Safety checks */
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    /* Optional dev noise control */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": ["src/**/*.ts", "drizzle.config.ts"],
+  "exclude": ["node_modules"]
+}
