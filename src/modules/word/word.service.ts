@@ -3,7 +3,7 @@ import { buildWordQuery } from "./word.query";
 import * as repo from "./word.repository";
 import { getSimilarity } from "../../utils/fuzzySearch";
 import { Word } from "../../models/word.model";
-import { CreateWordInput } from "./word.types";
+import { CreateWordInput, WordQueryParams } from "./word.types";
 /**
  * Create word business logic
  */
@@ -101,9 +101,9 @@ export const deleteWord = async (id: string) => {
 /**
  * get word
  */
-export const getWords = async (params: any) => {
-  const { query, pagination, sort } = buildWordQuery(params);
-
+export const getWords = async (params: WordQueryParams) => {
+  const buildQuery = buildWordQuery(params);
+  const { query, pagination, sort } = buildQuery;
   const [data, total] = await Promise.all([
     repo.findWords(query, pagination.skip, pagination.limit, sort),
     repo.countWords(query),
@@ -114,9 +114,9 @@ export const getWords = async (params: any) => {
     data,
     pagination: {
       total,
-      page: Number(params.page || 1),
-      limit: Number(params.limit || 20),
-      pages: Math.ceil(total / Number(params.limit || 20)),
+      page: params.page,
+      limit: pagination.limit,
+      pages: Math.ceil(total / pagination.limit),
     },
   };
 };

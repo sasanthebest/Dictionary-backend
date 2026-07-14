@@ -6,13 +6,12 @@ import { authMiddleware } from "../../middlewares/auth.middleware";
 import { createWordSchema } from "./dto/create-word.dto";
 import { updateWordSchema } from "./dto/update-word.dto";
 
-
 const router = Router();
 
 /**
  * IMPORTANT: put this ABOVE "/:id"
  */
-router.get("/", controller.getWords);
+router.post("/", controller.getWords);
 
 router.get("/search", controller.searchWords);
 router.get("/:id", controller.getWordById);

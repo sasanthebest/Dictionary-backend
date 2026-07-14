@@ -5,7 +5,7 @@ import { verifyRefreshToken, generateAccessToken } from "../../utils/jwt";
 import { redis } from "../../config/redis";
 import { User } from "../../models/user.model";
 import { AUTHENTICATION_MAX_AGE } from "../../settings";
-console.log(AUTHENTICATION_MAX_AGE);
+
 export const register = asyncHandler(async (req: Request, res: Response) => {
   console.log(req.body);
   const { name, email, password }: User = req.body;

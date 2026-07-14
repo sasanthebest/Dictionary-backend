@@ -1,21 +1,10 @@
-type WordQueryParams = {
-  page?: string;
-  limit?: string;
-  sort?: string;
-  level?: string;
-  partOfSpeech?: string;
-  search?: string;
-};
+import { WordQueryParams } from "./word.types";
 
 export const buildWordQuery = (params: WordQueryParams) => {
-  const {
-    page = "1",
-    limit = "20",
-    sort,
-    level,
-    partOfSpeech,
-    search,
-  } = params;
+  const { page, limit, sort, level, partOfSpeech, search } = params;
+
+  const pageNumber = Number(page) || 1;
+  const limitNumber = Number(limit) || 20;
 
   const query: any = {};
 
@@ -37,7 +26,7 @@ export const buildWordQuery = (params: WordQueryParams) => {
   }
 
   /* ---------------- pagination ---------------- */
-  const skip = (Number(page) - 1) * Number(limit);
+  const skip = (pageNumber - 1) * limitNumber;
 
   /* ---------------- sorting ---------------- */
   let sortOption: any = { createdAt: -1 };
@@ -60,7 +49,7 @@ export const buildWordQuery = (params: WordQueryParams) => {
     query,
     pagination: {
       skip,
-      limit: Number(limit),
+      limit: limitNumber,
     },
     sort: sortOption,
   };

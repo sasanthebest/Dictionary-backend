@@ -3,6 +3,7 @@ import * as wordService from "./word.service";
 import { asyncHandler } from "../../middlewares/asyncHandler";
 import { AppError } from "../../utils/AppError";
 import { getRequiredParam } from "../../utils/getRequiredParams";
+import { WordQueryParams } from "./word.types";
 
 /**
  * CREATE word
@@ -71,7 +72,8 @@ export const deleteWord = asyncHandler(async (req: Request, res: Response) => {
  * GET WORDS (pagination + filter + sort)
  */
 export const getWords = asyncHandler(async (req: Request, res: Response) => {
-  const result = await wordService.getWords(req.query);
+  const result = await wordService.getWords(req.body as WordQueryParams);
+
   res.json(result);
 });
 

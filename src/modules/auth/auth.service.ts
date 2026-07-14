@@ -4,8 +4,6 @@ import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { redis } from "../../config/redis";
 import { AUTHENTICATION_MAX_AGE } from "../../settings";
 
-console.log(AUTHENTICATION_MAX_AGE);
-
 export const register = async (
   name: string,
   email: string,
