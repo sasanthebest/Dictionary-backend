@@ -8,6 +8,8 @@ import { getRequiredParam } from "../../utils/getRequiredParams";
  * CREATE word
  */
 export const createWord = asyncHandler(async (req: Request, res: Response) => {
+  console.log("body request:", req.body);
+
   const result = await wordService.createWord(req.body);
   res.status(201).json(result);
 });

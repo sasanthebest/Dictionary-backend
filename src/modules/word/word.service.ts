@@ -2,10 +2,24 @@ import * as wordRepo from "./word.repository";
 import { buildWordQuery } from "./word.query";
 import * as repo from "./word.repository";
 import { getSimilarity } from "../../utils/fuzzySearch";
+import { Word } from "../../models/word.model";
+import { CreateWordInput } from "./word.types";
 /**
  * Create word business logic
  */
-export const createWord = async (data: any) => {
+export const createWord = async (data: CreateWordInput) => {
+  // Check if word already exists
+  const exists = await Word.exists({
+    normalizedWord: data.normalizedWord,
+  });
+
+  if (exists) {
+    return {
+      success: false,
+      error: "This word already exists",
+    };
+  }
+
   const word = await wordRepo.createWord(data);
 
   return {

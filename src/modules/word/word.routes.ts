@@ -1,9 +1,11 @@
 import { Router } from "express";
 import * as controller from "./word.controller";
 import { validate } from "../../middlewares/validate";
+
+import { authMiddleware } from "../../middlewares/auth.middleware";
 import { createWordSchema } from "./dto/create-word.dto";
 import { updateWordSchema } from "./dto/update-word.dto";
-import { authMiddleware } from "../../middlewares/auth.middleware";
+
 
 const router = Router();
 
@@ -16,7 +18,7 @@ router.get("/search", controller.searchWords);
 router.get("/:id", controller.getWordById);
 
 router.post(
-  "/",
+  "/add",
   authMiddleware,
   validate(createWordSchema),
   controller.createWord,

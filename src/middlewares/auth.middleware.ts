@@ -1,5 +1,5 @@
-import type { Request, Response, NextFunction } from "express";
-import { verifyAccessToken } from "../utils/jwt";
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 
 export const authMiddleware = (
   req: Request,
@@ -7,29 +7,24 @@ export const authMiddleware = (
   next: NextFunction,
 ) => {
   try {
-    const header = req.headers.authorization;
-
-    if (!header) {
-      return res.status(401).json({ message: "No token provided" });
-    }
-
-    const parts = header.split(" ");
-
-    if (parts.length !== 2) {
-      return res.status(401).json({ message: "Invalid token format" });
-    }
-
-    const token = parts[1];
+    const token = req.cookies?.access_token;
+    // console.log("token from authMiddleware-->", token);
     if (!token) {
-      return res.status(401).json({ message: "Token is undefined" });
+      res.status(401).json({ message: "Unauthenticated" });
+      return;
     }
+    // console.log("block");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      id: string;
+      name: string;
+    };
 
-    const decoded = verifyAccessToken(token) as { id: string };
-
-    (req as any).user = decoded;
+    // attach user to request
+    req.user = { id: decoded.id, name: decoded.name };
 
     next();
-  } catch {
+  } catch (error) {
+    console.log(error);
     return res.status(401).json({ message: "Invalid token" });
   }
 };

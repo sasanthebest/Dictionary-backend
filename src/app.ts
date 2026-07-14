@@ -4,10 +4,21 @@ import { errorHandler } from "./middlewares/errorHandler";
 import { securityMiddleware } from "./middlewares/security";
 import authRoutes from "./modules/auth/auth.routes";
 import { rateLimiterMiddleware } from "./middlewares/rateLimiter.middleware";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 const app = express();
 
 /* ---------------- middleware ---------------- */
+app.use(
+  cors({
+    origin: "http://localhost:3000", // your frontend URL
+    credentials: true, // 🔥 REQUIRED for cookies
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use(express.json());
+app.use(cookieParser());
 
 /**
  * 🔒 Apply rate limiting to ALL routes

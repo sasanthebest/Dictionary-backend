@@ -1,9 +1,11 @@
-import Word from "../../models/word.model";
+
 import { redis } from "../../config/redis";
+import { Word } from "../../models/word.model";
 /**
  * Create a new word in DB
  */
 export const createWord = (data: any) => {
+
   return Word.create(data);
 };
 

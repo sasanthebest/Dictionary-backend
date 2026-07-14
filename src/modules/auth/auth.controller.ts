@@ -3,10 +3,14 @@ import * as authService from "./auth.service";
 import { asyncHandler } from "../../middlewares/asyncHandler";
 import { verifyRefreshToken, generateAccessToken } from "../../utils/jwt";
 import { redis } from "../../config/redis";
+import { User } from "../../models/user.model";
+import { AUTHENTICATION_MAX_AGE } from "../../settings";
+console.log(AUTHENTICATION_MAX_AGE);
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  console.log(req.body);
+  const { name, email, password }: User = req.body;
 
-  const result = await authService.register(email, password);
+  const result = await authService.register(name, email, password);
 
   res.status(201).json({
     success: true,
@@ -15,50 +19,100 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
+  // console.log(req.body);
   const { email, password } = req.body;
 
   const result = await authService.login(email, password);
+  // console.log(result);
+  // set access token in httpOnly cookie
+  res.cookie("access_token", result.accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: AUTHENTICATION_MAX_AGE,
+  });
 
-  res.json({
+  // set refresh token in httpOnly cookie
+  res.cookie("refresh_token", result.refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: AUTHENTICATION_MAX_AGE,
+  });
+
+  return res.json({
     success: true,
-    ...result,
+    user: result.user, // optional but recommended
   });
 });
 
 export const refreshToken = asyncHandler(
   async (req: Request, res: Response) => {
-    const { refreshToken } = req.body;
+    // console.log("REFRESH CALLED", new Date().toISOString());
 
-    if (!refreshToken) {
-      return res.status(401).json({ message: "No refresh token" });
-    }
+    const token = req.cookies?.refresh_token;
 
-    const decoded = verifyRefreshToken(refreshToken) as { id: string };
+    // console.log("refresh cookie:", token);
 
-    const newAccessToken = generateAccessToken(decoded.id);
+    const decoded = verifyRefreshToken(token);
+    const { id, name, email } = decoded;
+    const newAccessToken = generateAccessToken(id, name, email);
 
+    // console.log("NEW ACCESS TOKEN:", newAccessToken);
+
+    res.cookie("access_token", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: AUTHENTICATION_MAX_AGE,
+    });
     return res.json({
       success: true,
-      accessToken: newAccessToken,
     });
   },
 );
 
-export const logout = asyncHandler(async (req: Request, res: Response) => {
-  const { userId } = req.body; // or from auth middleware
+export const logout = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.body;
 
-  if (!userId) {
-    return res.status(400).json({
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID required",
+      });
+    }
+
+    try {
+      // invalidate refresh token
+      await redis.del(`refresh:${userId}`);
+    } catch (redisError) {
+      console.error("Redis logout error:", redisError);
+
+      // continue logout
+    }
+
+    // always remove cookies
+    res.clearCookie("refresh_token");
+    res.clearCookie("access_token");
+
+    return res.json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+
+    return res.status(500).json({
       success: false,
-      message: "User ID required",
+      message: "Logout failed",
     });
   }
+};
 
-  // remove refresh token from redis
-  await redis.del(`refresh:${userId}`);
-
+export const me = async (req: Request, res: Response) => {
   return res.json({
     success: true,
-    message: "Logged out successfully",
+    user: req.user,
   });
-});
+};

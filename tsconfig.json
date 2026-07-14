@@ -21,8 +21,13 @@
 
     /* Optional dev noise control */
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "typeRoots": ["./src/@types", "./node_modules/@types"]
   },
-  "include": ["src/**/*.ts", "drizzle.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "drizzle.config.ts",
+    "../frontend/types/axios.d.ts"
+  ],
   "exclude": ["node_modules"]
 }
