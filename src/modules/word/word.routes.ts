@@ -14,6 +14,8 @@ const router = Router();
 router.post("/", controller.getWords);
 
 router.get("/search", controller.searchWords);
+router.get("/fuzzy", controller.fuzzySearchWords);
+router.get("/autocomplete", controller.autocompleteWords);
 router.get("/:id", controller.getWordById);
 
 router.post(
@@ -25,10 +27,8 @@ router.post(
 router.put(
   "/:id",
   authMiddleware,
-  validate(updateWordSchema),
+  validate(createWordSchema),
   controller.updateWord,
 );
 router.delete("/:id", authMiddleware, controller.deleteWord);
-router.get("/fuzzy", controller.fuzzySearchWords);
-router.get("/autocomplete", controller.autocompleteWords);
 export default router;
