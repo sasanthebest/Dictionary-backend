@@ -72,7 +72,8 @@ export const deleteWord = asyncHandler(async (req: Request, res: Response) => {
  * GET WORDS (pagination + filter + sort)
  */
 export const getWords = asyncHandler(async (req: Request, res: Response) => {
-  const result = await wordService.getWords(req.body as WordQueryParams);
+  const { params } = req.body as { params?: WordQueryParams };
+  const result = await wordService.getWords(params ?? (req.body as WordQueryParams));
 
   res.json(result);
 });
