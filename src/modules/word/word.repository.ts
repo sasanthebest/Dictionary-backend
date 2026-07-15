@@ -1,11 +1,10 @@
-
 import { redis } from "../../config/redis";
 import { Word } from "../../models/word.model";
+import { WORD_MAX_AGE } from "../../settings";
 /**
  * Create a new word in DB
  */
 export const createWord = (data: any) => {
-
   return Word.create(data);
 };
 
@@ -24,7 +23,7 @@ export const getWordById = async (id: string) => {
 
   if (word) {
     await redis.set(cacheKey, JSON.stringify(word), {
-      EX: 60 * 60, // 1 hour
+      PX: WORD_MAX_AGE,
     });
   }
 

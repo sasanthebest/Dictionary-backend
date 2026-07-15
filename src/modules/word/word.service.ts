@@ -103,6 +103,7 @@ export const deleteWord = async (id: string) => {
  */
 export const getWords = async (params: WordQueryParams) => {
   const buildQuery = buildWordQuery(params);
+
   const { query, pagination, sort } = buildQuery;
   const [data, total] = await Promise.all([
     repo.findWords(query, pagination.skip, pagination.limit, sort),
