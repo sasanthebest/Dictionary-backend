@@ -9,8 +9,6 @@ import { WordQueryParams } from "./word.types";
  * CREATE word
  */
 export const createWord = asyncHandler(async (req: Request, res: Response) => {
-  console.log("body request:", req.body);
-
   const result = await wordService.createWord(req.body);
   res.status(201).json(result);
 });
@@ -73,7 +71,9 @@ export const deleteWord = asyncHandler(async (req: Request, res: Response) => {
  */
 export const getWords = asyncHandler(async (req: Request, res: Response) => {
   const { params } = req.body as { params?: WordQueryParams };
-  const result = await wordService.getWords(params ?? (req.body as WordQueryParams));
+  const result = await wordService.getWords(
+    params ?? (req.body as WordQueryParams),
+  );
 
   res.json(result);
 });

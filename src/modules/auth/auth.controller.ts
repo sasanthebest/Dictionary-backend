@@ -7,7 +7,6 @@ import { User } from "../../models/user.model";
 import { AUTHENTICATION_MAX_AGE } from "../../settings";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  console.log(req.body);
   const { name, email, password }: User = req.body;
 
   const result = await authService.register(name, email, password);
@@ -19,7 +18,6 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
-  // console.log(req.body);
   const { email, password } = req.body;
 
   const result = await authService.login(email, password);

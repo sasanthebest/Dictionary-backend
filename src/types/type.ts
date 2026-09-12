@@ -1,0 +1,1 @@
+type ServerMode = "development" | "production";

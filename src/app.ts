@@ -11,8 +11,10 @@ const app = express();
 /* ---------------- middleware ---------------- */
 app.use(
   cors({
-    origin: "http://localhost:3000", // your frontend URL
-    // origin: "*", // your frontend URL
+    // `express-backend` is a Docker DNS name, not a browser origin. Set this
+    // for deployments that access the API directly; normal app traffic goes
+    // through Next's same-origin /api proxy and does not need CORS.
+    origin: process.env.FRONTEND_ORIGIN ?? "http://localhost:3000",
     credentials: true, // 🔥 REQUIRED for cookies
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -24,9 +26,9 @@ app.use(cookieParser());
 /**
  * 🔒 Apply rate limiting to ALL routes
  */
-if (process.env.NODE_ENV === "production") {
-  app.use(rateLimiterMiddleware);
-}
+// if (process.env.NODE_ENV === "production") {
+//   app.use(rateLimiterMiddleware);
+// }
 
 /* ---------------- routes ---------------- */
 app.use("/api/words", wordRoutes);

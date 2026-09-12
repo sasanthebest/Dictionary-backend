@@ -45,6 +45,7 @@ export const definitionSchema = z.object({
 
 export const createWordSchema = z.object({
   word: z.string().min(1).max(100),
+  userId: z.string().optional(),
 
   normalizedWord: z.string().min(1).max(100),
 

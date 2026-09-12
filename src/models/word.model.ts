@@ -132,6 +132,15 @@ const WordSchema = new Schema<CreateWordInput>(
       required: true,
       trim: true,
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+      validate: {
+        validator: mongoose.Types.ObjectId.isValid,
+        message: "Invalid userId format",
+      },
+    },
 
     normalizedWord: {
       type: String,
